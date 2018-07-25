@@ -39,7 +39,8 @@ elseif(strcmp(mode, 'FC'))
     plot(sig(:, 2));
 
 elseif(strcmp(mode, 'LD'))
-    load('sig.mat');
+
+    load(sprintf('signal/stack%d/sig.mat', stack_num));
     x1 = sig(:, 2);
     t = 0:1/5000:(size(x1)/5000-1/5000);
     sig = [t', x1];
