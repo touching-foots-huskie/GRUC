@@ -65,16 +65,16 @@ class Trainer:
         '''
         self.train_dataX = dataX
         self.train_dataY = dataY
-        np.save('{}/data/fast_data/trainX.npy'.format(self.config['plant']), self.train_dataX)
-        np.save('{}/data/fast_data/trainY.npy'.format(self.config['plant']), self.train_dataY)
+        np.save('{}/fast_data/trainX.npy'.format(self.config['plant']), self.train_dataX)
+        np.save('{}/fast_data/trainY.npy'.format(self.config['plant']), self.train_dataY)
 
         self.val_data = dict()
         self.val_dataX = dataX[-100:]
         self.val_dataY = dataY[-100:]
         self.val_data['X'] = self.val_dataX
         self.val_data['Y'] = self.val_dataY
-        np.save('{}/data/fast_data/valX.npy'.format(self.config['plant']), self.val_dataX)
-        np.save('{}/data/fast_data/valY.npy'.format(self.config['plant']), self.val_dataY)
+        np.save('{}/fast_data/valX.npy'.format(self.config['plant']), self.val_dataX)
+        np.save('{}/fast_data/valY.npy'.format(self.config['plant']), self.val_dataY)
 
     def train(self):
         history = self.nn.train(self.train_dataX, self.train_dataY)
@@ -107,8 +107,8 @@ class Trainer:
         #  _, train_dataX = D.down_sample(train_dataX, 10, 1)
         print(diff_Y.shape)
 
-        np.save('{}/data/fast_data/diff_X.npy'.format(self.config['plant']), train_dataX)
-        np.save('{}/data/fast_data/diff_Y.npy'.format(self.config['plant']), diff_Y)
+        np.save('{}/fast_data/diff_X.npy'.format(self.config['plant']), train_dataX)
+        np.save('{}/fast_data/diff_Y.npy'.format(self.config['plant']), diff_Y)
         #  validation part:
         val_predict_Y = self.nn.implement(self.val_dataX)
         val_diff_Y = self.val_dataY - predict_Y
@@ -121,13 +121,13 @@ class Trainer:
         #  _, val_diff_Y = D.down_sample(val_diff_Y, 10, 1)
         #  _, val_dataX = D.down_sample(val_dataX, 10, 1)
 
-        np.save('{}/data/fast_data/val_diff_X.npy'.format(self.config['plant']), val_dataX)
-        np.save('{}/data/fast_data/val_diff_Y.npy'.format(self.config['plant']), val_diff_Y)
+        np.save('{}/fast_data/val_diff_X.npy'.format(self.config['plant']), val_dataX)
+        np.save('{}/fast_data/val_diff_Y.npy'.format(self.config['plant']), val_diff_Y)
  
     def implement(self, iter_time=1):
         #  imdataX is the data come from target structure:
         #  imdatax should be (N, time_step, 9)
-        im_dataX = scio.loadmat('{}/data/im_data.mat'.format(self.config['plant']))['x']  #  experiemental scaled
+        im_dataX = scio.loadmat('matlab_id/data/im_data.mat'.format(self.config['plant']))['x']  #  experiemental scaled
         if len(im_dataX.shape) == 2:
             im_dataX = im_dataX[:, :, np.newaxis]
 
@@ -152,5 +152,5 @@ class Trainer:
             predict_Y = np.concatenate([predict_Y, np.zeros([z_num, num_diff, z_c])], axis=1)
 
         #  reshape into standard shape
-        scio.savemat('{}/data/pre_data.mat'.format(self.config['plant']), {'yp':predict_Y})
+        scio.savemat('matlab_id/data/pre_data.mat'.format(self.config['plant']), {'yp':predict_Y})
         return predict_Y

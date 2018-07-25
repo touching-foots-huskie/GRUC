@@ -4,7 +4,6 @@ from scipy.signal import savgol_filter as filt
 import numpy as np
 import dataset as D
 import tensorflow as tf
-from network.sru import SRU
 from matplotlib import pyplot as plt
 from keras.models import load_model
 from keras.models import Sequential

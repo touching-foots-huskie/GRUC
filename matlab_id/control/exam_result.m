@@ -4,7 +4,7 @@ clear
 number = [41, 41, 41];
 names = [{'PID'}, {'ILC'}, {'GRUC'}];
 color = [{'b'}, {'r'}, {'g'}];
-file_path = '../measure/log/mat/x_fix';
+file_path = '../measure/log/mat/pid';
 %% first time:
 for i = 1:1:max(size(number))
     load(sprintf('%s/%d.mat', file_path, number(i)));

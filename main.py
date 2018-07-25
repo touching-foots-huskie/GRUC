@@ -1,7 +1,6 @@
 # : Harvey Chang
 # : chnme40cs@gmail.com
 # main function is used to make all configurations and making results:
-import tqdm
 import numpy as np
 import tensorflow as tf
 import dataset as D
@@ -13,7 +12,7 @@ def main():
     config = dict()
     #  mode
     config['plant'] = 'pid'
-    config['mode'] = 'implement'
+    config['mode'] = 'test'
     config['continue'] = False
 
     #  changing part:
@@ -30,8 +29,8 @@ def main():
     
     config['diff'] = True  # if differentiate inside
     #  params for signals:
-    config['file_path'] = '{}/data/data'.format(config['plant']) 
-    config['val_path'] = '{}/data/data'.format(config['plant']) 
+    config['file_path'] = 'matlab_id/data/{}'.format(config['plant']) 
+    config['val_path'] = 'matlab_id/data/{}'.format(config['plant']) 
 
     #  log structure
     config['save'] = True

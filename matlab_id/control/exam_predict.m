@@ -56,9 +56,9 @@ hold on
 % error
 % plot(ccomp - ce(1:size(ccomp,1)));
 axis([10, 14, -1.2e-5, 1.2e-5]);
-ylabel('PID Error (m)');
+ylabel('Error (m)');
 xlabel('Time (s)');
-legend;
+legend('experimental', 'prediction');
 %% save the new compensation structure:
 %% add T0 ahead of x1 and comp:
 xs = zeros(5000*5, 1);

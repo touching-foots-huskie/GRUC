@@ -4,10 +4,11 @@ clear
 %
 addpath ../tool
 %% 1. read data:
+mode = 'pid'
 Start = 31;
 End = 50;
 filenames = cell((End-Start+1), 1);
-file_dir = '../measure/log/mat/perfect';
+file_dir = '../measure/log/mat/pid_train';
 
 for i=1:1:(End-Start+1)
 % filenames(i) = {sprintf('../measure/log/mat/exam/%d.mat', i+Start-1)};
@@ -61,6 +62,6 @@ y = down_sample(y, 10);
 x = x';
 y = y';
 
-save('../data/x.mat', 'x');
-save('../data/y.mat', 'y');
+save(sprintf('../data/%s/x.mat', mode),'x');
+save(sprinf('../data/%s/y.mat',mode),'y');
 % save('../data/yb.mat', 'yb');
