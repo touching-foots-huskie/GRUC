@@ -1,2 +1,5 @@
 *.mat
 *.h5
+*.npy
+*.xml
+*.pyc
