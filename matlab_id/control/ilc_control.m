@@ -3,10 +3,10 @@ clc
 clear 
 No = 44; % original PID or ILC in previous iter
 file_path = '../measure/log/mat/pid';
-
+stack_num = 1;
 % noise
 noise = false;
-change = true;
+change = false;
 
 % parameters:
 T = 40; 
@@ -49,5 +49,5 @@ comp = [zeros(Ts*fs, 1); comp];
 compensate = [t', comp];
 
 %% Save the data:
-save('../measure/signal/sig.mat', 'sig');
-save('../measure/signal/compensate.mat', 'compensate');
+save(sprintf('../measure/signal/stack%d/sig.mat', stack_num), 'sig');
+save(sprintf('../measure/signal/stack%d/compensate.mat', stack_num), 'compensate');

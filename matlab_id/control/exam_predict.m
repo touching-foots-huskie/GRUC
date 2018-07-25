@@ -2,9 +2,10 @@ clc
 clear 
 
 addpath ../tool
+stack_num = 1;
 No1 = 44;
 No2 = 44;
-file_path = '../measure/log/mat/perfect';
+file_path = '../measure/log/mat/pid';
 
 %% plot yo:
 load(sprintf( '%s/%d.mat',file_path, No1)); 
@@ -68,5 +69,5 @@ t = 0:1/5000:(size(x1)/5000-1/5000);
 sig = [t', x1];
 compensate = [t', comp];
 %% save the data:
-save('../measure/signal/sig.mat', 'sig');
-save('../measure/signal/compensate.mat', 'compensate');
+save(sprintf('../measure/signal/stack%d/sig.mat', stack_num), 'sig');
+save(sprintf('../measure/signal/stack%d/compensate.mat', stack_num), 'compensate');

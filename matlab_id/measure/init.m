@@ -6,11 +6,12 @@ clear
 addpath ../tool
 addpath signal
 % init
-pid
-% arc
+init_pid
+% init_arc
 
 % FC: forward compensation| GN: generate nurbs| GS: generate sin
 % LD: load data
+stack_num = 1;
 mode = 'GS'; 
 N = 3; 
 T = 40; 
@@ -23,18 +24,16 @@ if(strcmp(mode, 'GN'))
     sig = nurbs_gen(N, T, A);
     % zero compensate:
     compensate = [sig(:,1), zeros(size(sig(:,1), 1),1)];
-    save('signal/sig.mat', 'sig');
     
 elseif(strcmp(mode, 'GS'))
     w = 3;
     sig = sin_gen(w, fs, T, A);
     compensate = [sig(:,1), zeros(size(sig(:,1), 1),1)];
-    save('signal/sig.mat', 'sig');
     
 elseif(strcmp(mode, 'FC'))
    
-    load('signal/sig.mat');
-    load('signal/compensate.mat');
+    load(sprintf('signal/stack%d/sig.mat', stack_num));
+    load(sprintf('signal/stack%d/compensate.mat', stack_num));
     hold on
     plot(sig(:, 2));
 
