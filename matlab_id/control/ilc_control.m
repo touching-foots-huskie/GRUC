@@ -9,9 +9,9 @@ noise = false;
 change = true;
 
 % parameters:
-T = 40;  % ����ʱ��|  110 for train and 10 for test:
-T_sim = T;  % T_sim is the configuration for simulink
-A = 0.03; % ���з�ֵ
+T = 40; 
+T_sim = T; 
+A = 0.03;
 
 load(sprintf( '%s/%d.mat',file_path, No));    
 c1 = rec.Y(1).Data';

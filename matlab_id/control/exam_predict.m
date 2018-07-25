@@ -1,6 +1,3 @@
-% exam prediction:
-% add the prediction structure into exam:
-%% load the data we want to exam:
 clc
 clear 
 
