@@ -9,5 +9,3 @@
 > add noise to previous data| used in Set2 of ILC.
 + nurbs change/sin change.m
 > change reference into another signal with equal length| used in Set3 of ILC.
-+ noise filt.m
-> filt noise for ILC.

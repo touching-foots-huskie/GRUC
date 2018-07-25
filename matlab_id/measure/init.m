@@ -6,6 +6,7 @@ clear
 addpath ../tool
 addpath signal
 % init
+% switch mode
 init_pid
 % init_arc
 
