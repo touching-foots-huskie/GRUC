@@ -1,12 +1,16 @@
 % ilc control and noised ilc control
 clc
-clear 
-No = 44; % original PID or ILC in previous iter
+clear
+addpath ../tool
+No = 69; % original PID or ILC in previous iter
 file_path = '../measure/log/mat/pid';
-stack_num = 1;
+stack_num = 2;
 % noise
-noise = false;
-change = false;
+noise = false;  % add noise
+change = false;  % change with a new traj 
+replace = true;  % replace it with another traj
+% if replace
+Num = 44;
 
 % parameters:
 T = 40; 
@@ -27,6 +31,7 @@ hold on
 Ts = 5;
 fs = 5000;
 x1 = [zeros(Ts*fs, 1); x1];
+comp = [zeros(Ts*fs, 1); comp];
 t = 0:1/5000:(size(x1)/5000-1/5000);
 %% Nurbs noise
 if noise
@@ -43,9 +48,17 @@ if change
     x1 = nurbs_change(x1, T, A);
     plot(t', x1);
 end
+
+%% Replace it with Num:
+if replace
+    plot(t', x1);
+    hold on
+    [x1, comp] = nurbs_replace(x1, Num, file_path);
+    plot(t', x1);
+end
+
 %% Concat Structure
 sig = [t', x1];
-comp = [zeros(Ts*fs, 1); comp];
 compensate = [t', comp];
 
 %% Save the data:

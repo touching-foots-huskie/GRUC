@@ -1,10 +1,5 @@
-clc
-clear 
-
+function rpredict(No1, stack_num)
 addpath ../tool
-stack_num = 1;
-No1 = 44;
-No2 = 44;
 file_path = '../measure/log/mat/pid';
 
 %% plot yo:
@@ -28,26 +23,18 @@ plot(t, ce);
 
 %% process yp:
 hold on
-load(sprintf( '%s/%d.mat',file_path, No2));
-c2 = rec.Y(1).Data';
-x2 = rec.Y(4).Data';
-y2 = rec.Y(3).Data';
-
 % get p0:
-x0 = down_sample(x2, 10);
+x0 = down_sample(x1, 10);
 p0 = min(find(abs(x0-0.1)<1e-10));
 load('../data/pre_data.mat');
 yp = [zeros(p0-1, 1);yp'];
 yp = extend_sample(yp, 10);
 
 % new predict is new compensate:
-c1(1:size(yp, 1)) = yp;
+clen = min(size(c1, 1), size(yp, 1));
+c1(1:clen) = yp(1:clen);
 comp = c1;
 % filt
-p2 = min(find(abs(x2-0.1)<1e-10));
-ad = find(abs(x2(p2:end)-0.1)>1e-10)+p2;
-start_p = min(ad);
-end_p = max(ad);
 comp(1:start_p) = 0;
 comp(end_p:end)=0;
 ccomp = comp(start_p:end_p);
@@ -65,9 +52,10 @@ legend('experimental', 'prediction');
 xs = zeros(5000*5, 1);
 x1 = [xs;x1];
 comp = [xs; comp];
-t = 0:1/5000:(size(x1)/5000-1/5000);
-sig = [t', x1];
-compensate = [t', comp];
+tn = 0:1/5000:(size(x1)/5000-1/5000);
+sig = [tn', x1];
+compensate = [tn', comp];
 %% save the data:
 save(sprintf('../measure/signal/stack%d/sig.mat', stack_num), 'sig');
 save(sprintf('../measure/signal/stack%d/compensate.mat', stack_num), 'compensate');
+end

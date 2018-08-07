@@ -1,9 +1,9 @@
-% exam results:
 clc
-clear 
-number = [41, 41, 41];
-names = [{'PID'}, {'ILC'}, {'GRUC'}];
-color = [{'b'}, {'r'}, {'g'}];
+clear
+addpath  ../tool
+number = [67, 66, 71, 69];
+names = [{'PID'}, {'ILC[1]'}, {'ILC[4]'}, {'GRU'}];
+color = [{'b'}, {'r'}, {'g'}, {'k'}];
 file_path = '../measure/log/mat/pid';
 %% first time:
 for i = 1:1:max(size(number))
