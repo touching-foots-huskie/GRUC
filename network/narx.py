@@ -1,5 +1,6 @@
 # narx.py: narx version of prediction network
 
+import random
 import numpy as np
 import tensorflow as tf
 
@@ -35,11 +36,12 @@ class network:
     def restore(self):
         self.saver.restore('train_log/narx_model')
 
-    def train(self, data_dicts):
+    def train(self, x, y):
+
         # restore/ 
         if self.config['restore']:
             self.restore()
-        for epoch, data_dict in self.config['epochs'], data_dicts:
+        for epoch, data_dict in self.config['epochs'], self.data_dict_gen(x, y):
             _, loss = self.sess.run(self.train_op, self.loss, feed_dict = data_dict)  
             print("epoch:{}|loss:{}".format(epoch, loss))
 
@@ -49,3 +51,18 @@ class network:
 
     # generating data_dicts:
     # x[t-1], e[t-1], y[t]
+
+    def data_dict_gen(self, x, y):
+        '''
+        x: (None, time_s, 4)
+        y: (None, time_s, 1)
+        '''
+        x = np.concatenate([x[:, 1:], y[:,:-1]], axis=-1)
+        y = y[:, 1:]
+        assert x.shape == y.shape
+        while True:
+            num = random.randint(self.config['batch_size'])
+            data_dict = dict()
+            data_dict[self.input] = x[num]
+            data_dict[self.label] = y[num]
+            yield data_dict
