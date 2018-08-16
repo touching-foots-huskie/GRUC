@@ -20,7 +20,6 @@ class Trainer:
         if self.config['restore']:
             self.nn.restore()
 
-        self.m = config['m']
         self.batch_size = config['batch_size']
 
     def add_raw(self, X, Y, data_type='train'):
@@ -78,14 +77,15 @@ class Trainer:
 
     def train(self):
         history = self.nn.train(self.train_dataX, self.train_dataY)
+        if self.config['save']:
+            self.nn.save()
         plt.plot(history.history['mean_absolute_error'])
         plt.xlabel('epoch')
         plt.ylabel('mae')
         plt.title('mae learning process')
         plt.savefig('ac.png')
 
-        if self.config['save']:
-            self.nn.save()
+
         self.test()
 
     def test(self):
