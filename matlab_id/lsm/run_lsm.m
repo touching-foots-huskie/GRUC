@@ -3,8 +3,9 @@ clear
 
 %% learn from a specific data part
 addpath ../tool
-No = 44;
-No2 = 30;
+No = 30;
+
+No2 = 44; % examed data
 fs = 5000;
 mode = 'pid';
 file_path = '../measure/log/mat/pid';
