@@ -12,7 +12,7 @@ def main():
     config = dict()
     #  mode
     config['plant'] = 'pid'
-    config['mode'] = 'implement'
+    config['mode'] = 'train'
     config['continue'] = False
 
     #  changing part:
