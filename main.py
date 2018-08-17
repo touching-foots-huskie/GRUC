@@ -23,9 +23,8 @@ def main():
     # arc: 64| pid: 128 # arc: 1e-3| pid: 1e-2
     config['scales'] = [10.0, 3e2, 4e4, 1e6, 8e4] 
 
-    config['m'] = 1  # previous m x and y
-    config['dim'] = 4*(config['m']*2+config['time_step'])
-    config['out_dim'] = config['time_step']
+    config['dim'] = 4
+    config['out_dim'] = 1
     
     config['diff'] = True  # if differentiate inside
     #  params for signals:
