@@ -62,6 +62,6 @@ y = down_sample(y, 10);
 x = x';
 y = y';
 
-save(sprintf('../data/%s/x.mat', mode),'x');
-save(sprinf('../data/%s/y.mat',mode),'y');
+save(sprintf('../data/%s/sample/x.mat', mode),'x');
+save(sprintf('../data/%s/sample/y.mat',mode),'y');
 % save('../data/yb.mat', 'yb');
