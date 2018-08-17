@@ -77,6 +77,7 @@ class Trainer:
         self.nn.train(self.train_dataX, self.train_dataY)
         if self.config['save']:
             self.nn.save()
+        self.test()
 
     def test(self):
         #  drawing examination

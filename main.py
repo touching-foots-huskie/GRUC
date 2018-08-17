@@ -15,6 +15,7 @@ def main():
     config['plant'] = 'pid'
     config['mode'] = 'test'
     config['continue'] = False
+    config['recurrent'] = True
 
     #  changing part:
     config['seg_len'] = 995

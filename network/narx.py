@@ -5,33 +5,48 @@ import random
 import numpy as np
 import tensorflow as tf
 from matplotlib import pyplot as plt
+from network.narx_unit import Nu
 
 class network:
     def __init__(self, config):
         self.config = config
         self.net_dims = [32, 64, 32, 1]
 
-        self.output = self.build_net()
+        if self.config['recurrent']:
+            self.output = self.build_recurrent()
+        else:
+            self.output = self.build_net()
+        pdb.set_trace()
         # training structure:
         self.loss = tf.losses.mean_squared_error(self.output, self.label)
         self.opt = tf.train.AdamOptimizer(config['learning_rate'])
         self.train_op = self.opt.minimize(self.loss)
         self.sess = tf.Session()
 
-        self.saver = tf.train.Saver(tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, scope='dense'))
+        self.saver = tf.train.Saver(tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, scope='rnn/nu'))
         # start a sess and initial it.
         self.sess.run(tf.initialize_variables(tf.global_variables()))
         
     def build_net(self):
+        # sequence model
         self.input = tf.placeholder(tf.float32, shape=(None, self.config['seg_len'], self.config['dim']+1)) # using (e, x, v, a, j)_(t-1) to predict e_t
         self.label = tf.placeholder(tf.float32, shape=(None, self.config['seg_len'], 1))
 
         _layer = self.input
 
-        with tf.variable_scope('dense'):
+        with tf.variable_scope('rnn/nu'):
             for _dim in self.net_dims:
                 _layer = tf.layers.dense(_layer, _dim, kernel_initializer= tf.keras.initializers.Orthogonal())
         return _layer
+
+    def build_recurrent(self):
+        # recurrent model
+        self.input = tf.placeholder(tf.float32, shape=(self.config['batch_size'], self.config['seg_len'], self.config['dim']))
+        self.label = tf.placeholder(tf.float32, shape=(self.config['batch_size'], self.config['seg_len'], self.config['out_dim']))
+        cell = Nu(1)
+        init_state = tf.constant(np.zeros([self.config['batch_size'], self.config['out_dim']]), dtype=tf.float32)
+        output, final_state = tf.nn.dynamic_rnn(cell, self.input, initial_state=init_state, time_major=False, swap_memory=True)       
+        return output
 
     def save(self):
         self.saver.save(self.sess, 'train_log/narx_model')
