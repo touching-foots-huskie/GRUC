@@ -54,9 +54,7 @@ def xy_process(X, Y, config):
         # shape of new datax in 4 shorter [2:-2]
         X = np.concatenate([X[2:-2], V, A, J], axis=-1)
 
-        # focusing on diff of Y
-        Yd = Y[2:] - Y[:-2] 
-        Y = Yd[1:-1]
+        Y = Y[2:-2]
 
     #  get scaled:
     for i in range(X.shape[-1]):
