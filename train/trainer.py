@@ -82,8 +82,6 @@ class Trainer:
         plt.ylabel('mae')
         plt.title('mae learning process')
         plt.savefig('ac.png')
-
-
         self.test()
 
     def test(self):

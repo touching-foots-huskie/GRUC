@@ -11,13 +11,14 @@ class network:
 
         self.output = self.build_net()
         # training structure:
-        self.loss = tf.losses.mean_squared_error(self.output - self.label)
+        self.loss = tf.losses.mean_squared_error(self.output, self.label)
         self.opt = tf.train.AdamOptimizer(config['learning_rate'])
         self.train_op = self.opt.minimize(self.loss)
-        self.saver = tf.trainer.Saver(tf.Graph.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES), scope='dense')
-        # start a sess and initial it.
         self.sess = tf.Session()
-        self.sess.run(tf.initialize_variables(tf.global_variables())
+
+        self.saver = tf.train.Saver(tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, scope='dense'))
+        # start a sess and initial it.
+        self.sess.run(tf.initialize_variables(tf.global_variables()))
         
     def build_net(self):
         self.input = tf.placeholder(tf.float32, shape=(None, self.config['seg_len'], self.config['dim']+1)) # using (e, x, v, a, j)_(t-1) to predict e_t
@@ -37,6 +38,7 @@ class network:
         self.saver.restore('train_log/narx_model')
 
     def train(self, x, y):
+        pdb.set_trace()
         for epoch, data_dict in self.config['training_epochs'], self.data_dict_gen(x, y):
             _, loss = self.sess.run(self.train_op, self.loss, feed_dict = data_dict)  
             print("epoch:{}|loss:{}".format(epoch, loss))
@@ -45,6 +47,11 @@ class network:
 
     # generating data_dicts:
     # x[t-1], e[t-1], y[t]
+    def validate(self, x, y):
+        for data_dict in self.data_dict_gen(x, y):
+            loss = self.sess.run(self.loss, feed_dict = data_dict) 
+            print("validation loss:{}".format(loss))
+        print("validation finished!")
 
     def data_dict_gen(self, x, y):
         '''

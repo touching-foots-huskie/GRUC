@@ -1,6 +1,7 @@
 # : Harvey Chang
 # : chnme40cs@gmail.com
 # main function is used to make all configurations and making results:
+import pdb
 import numpy as np
 import tensorflow as tf
 import dataset as D
@@ -12,10 +13,11 @@ def main():
     config = dict()
     #  mode
     config['plant'] = 'pid'
-    config['mode'] = 'implement'
+    config['mode'] = 'train'
     config['continue'] = False
 
     #  changing part:
+    config['seg_len'] = 996
     config['time_step'] = 1  # predict in segment
     config['training_epochs'] = 600
     config['batch_size'] = 64 if config['plant'] == 'arc' else 128  # arc: 64| pid: 128
