@@ -28,8 +28,8 @@ def main():
     
     config['diff'] = True  # if differentiate inside
     #  params for signals:
-    config['file_path'] = 'matlab_id/data/{}'.format(config['plant']) 
-    config['val_path'] = 'matlab_id/data/{}'.format(config['plant']) 
+    config['file_path'] = 'matlab_id/data/{}/sample'.format(config['plant']) 
+    config['val_path'] = 'matlab_id/data/{}/sample'.format(config['plant']) 
 
     #  log structure
     config['save'] = True
