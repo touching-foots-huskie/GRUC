@@ -13,13 +13,15 @@ def main():
     #  mode
     config['plant'] = 'pid'
     config['mode'] = 'train'
-    config['continue'] = False
+    config['continue'] = True
 
     #  changing part:
     config['time_step'] = 1  # predict in segment
     config['training_epochs'] = 600
     config['batch_size'] = 64 if config['plant'] == 'arc' else 128  # arc: 64| pid: 128
-    config['learning_rate'] = 5e-3  
+    config['learning_rate'] = 1e-3
+    # 2: config['learning_rate'] = 1e-3  
+    # 1: config['learning_rate'] = 5e-3 | first 
     # arc: 64| pid: 128 # arc: 1e-3| pid: 1e-2
     config['scales'] = [10.0, 3e2, 4e4, 1e6, 8e4] 
 

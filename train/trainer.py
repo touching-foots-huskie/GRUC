@@ -60,8 +60,8 @@ class Trainer:
         _, dataX = D.down_sample(dataX, 10, axis=1)
         _, dataY = D.down_sample(dataY, 10, axis=1)
         '''
-        self.train_dataX = dataX
-        self.train_dataY = dataY
+        self.train_dataX = dataX[:-100]
+        self.train_dataY = dataY[:-100]
         np.save('{}/fast_data/trainX.npy'.format(self.config['plant']), self.train_dataX)
         np.save('{}/fast_data/trainY.npy'.format(self.config['plant']), self.train_dataY)
 
