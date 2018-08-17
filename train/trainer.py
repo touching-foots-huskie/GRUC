@@ -20,8 +20,6 @@ class Trainer:
         if self.config['restore']:
             self.nn.restore()
 
-        self.batch_size = config['batch_size']
-
     def add_raw(self, X, Y, data_type='train'):
         #  smooth y:
         Y = Y.reshape([Y.shape[0], -1])
