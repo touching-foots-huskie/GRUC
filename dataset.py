@@ -53,29 +53,29 @@ def xy_process(X, Y, config):
         V = V[1:-1]
         # shape of new datax in 4 shorter [2:-2]
         X = np.concatenate([X[2:-2], V, A, J], axis=-1)
-        Y = Y[2:-2].reshape([-1, 1])
+
+        # focusing on diff of Y
+        Yd = Y[2:] - Y[:-2] 
+        Y = Yd[1:-1]
 
     #  get scaled:
     for i in range(X.shape[-1]):
         X[:, i] *= config['scales'][i]
 
-    '''
-    print('X: {}'.format(X[:, 0].min()))
-    print('V: {}'.format(X[:, 1].min()))
-    print('A: {}'.format(X[:, 2].min()))
-    print('J: {}'.format(X[:, 3].min()))
-    '''
-
     Y *= config['scales'][-1]
-    #  get tuples:
-    datax, datay = [], []
-    _t = config['time_step']
-    for j in range((Y.shape[0]-2*config['m'])//_t):
-        datax.append(X[j*_t:(j+1)*_t+2*config['m']].ravel())
-        datay.append(Y[j*_t+config['m']:(j+1)*_t+config['m']].ravel())
 
-    datax = np.asarray(datax, dtype=np.float32)
-    datay = np.asarray(datay, dtype=np.float32)
+    '''
+    print('X: {}'.format(X[:, 0].max()))
+    print('V: {}'.format(X[:, 1].max()))
+    print('A: {}'.format(X[:, 2].max()))
+    print('J: {}'.format(X[:, 3].max()))
+    print('Y: {}'.format(Y.max()))
+    '''
+
+    #  get tuples:
+    datax = np.asarray(X, dtype=np.float32)
+    datay = np.asarray(Y, dtype=np.float32)
+
     return datax, datay
 
 
@@ -107,12 +107,7 @@ def x_process(X, config):
             Xm[:, k] *= config['scales'][k]
 
         #  time connected
-        datax = []
-        _t = config['time_step']
-        for j in range((Xm.shape[0]-2*config['m'])//_t):
-            datax.append(Xm[j*_t:(j+1)*_t+2*config['m']].ravel())
-
-        datax = np.asarray(datax, dtype=np.float32)
+        datax = np.asarray(Xm, dtype=np.float32)
         dataX.append(datax)
     #  cast:
     dataX = np.asarray(dataX)
