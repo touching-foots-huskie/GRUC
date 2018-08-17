@@ -1,0 +1,2 @@
+model_checkpoint_path: "narx_model"
+all_model_checkpoint_paths: "narx_model"

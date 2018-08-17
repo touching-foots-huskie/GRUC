@@ -74,15 +74,9 @@ class Trainer:
         np.save('{}/fast_data/valY.npy'.format(self.config['plant']), self.val_dataY)
 
     def train(self):
-        history = self.nn.train(self.train_dataX, self.train_dataY)
+        self.nn.train(self.train_dataX, self.train_dataY)
         if self.config['save']:
             self.nn.save()
-        plt.plot(history.history['mean_absolute_error'])
-        plt.xlabel('epoch')
-        plt.ylabel('mae')
-        plt.title('mae learning process')
-        plt.savefig('ac.png')
-        self.test()
 
     def test(self):
         #  drawing examination

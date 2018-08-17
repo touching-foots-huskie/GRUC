@@ -1,8 +1,10 @@
 # narx.py: narx version of prediction network
 
+import pdb
 import random
 import numpy as np
 import tensorflow as tf
+from matplotlib import pyplot as plt
 
 class network:
     def __init__(self, config):
@@ -35,12 +37,11 @@ class network:
         self.saver.save(self.sess, 'train_log/narx_model')
         
     def restore(self):
-        self.saver.restore('train_log/narx_model')
+        self.saver.restore(self.sess, 'train_log/narx_model')
 
     def train(self, x, y):
-        pdb.set_trace()
-        for epoch, data_dict in self.config['training_epochs'], self.data_dict_gen(x, y):
-            _, loss = self.sess.run(self.train_op, self.loss, feed_dict = data_dict)  
+        for epoch, data_dict in zip(range(self.config['training_epochs']), self.data_dict_gen(x, y)):
+            _, loss = self.sess.run([self.train_op, self.loss], feed_dict=data_dict)  
             print("epoch:{}|loss:{}".format(epoch, loss))
 
         print("training finished!")
@@ -48,10 +49,19 @@ class network:
     # generating data_dicts:
     # x[t-1], e[t-1], y[t]
     def validate(self, x, y):
-        for data_dict in self.data_dict_gen(x, y):
-            loss = self.sess.run(self.loss, feed_dict = data_dict) 
-            print("validation loss:{}".format(loss))
+        output = self.predict(x, y)
         print("validation finished!")
+        for i in range(x.shape[0]):
+            plt.plot(output[i].ravel(), label='prediction')
+            plt.plot(y[i].ravel(), label='actual')
+            plt.legend()
+            plt.show()
+
+    def predict(self, x, y):
+        # process data
+        data_x = np.concatenate([x[:, 1:], y[:,:-1]], axis=-1)
+        output = self.sess.run(self.output, feed_dict={self.input:data_x})
+        return output
 
     def data_dict_gen(self, x, y):
         '''
@@ -60,9 +70,8 @@ class network:
         '''
         x = np.concatenate([x[:, 1:], y[:,:-1]], axis=-1)
         y = y[:, 1:]
-        assert x.shape == y.shape
         while True:
-            num = random.randint(self.config['batch_size'])
+            num = np.random.randint(low=1, high=x.shape[0], size=self.config['batch_size'])
             data_dict = dict()
             data_dict[self.input] = x[num]
             data_dict[self.label] = y[num]

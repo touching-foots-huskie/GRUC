@@ -13,11 +13,11 @@ def main():
     config = dict()
     #  mode
     config['plant'] = 'pid'
-    config['mode'] = 'train'
+    config['mode'] = 'test'
     config['continue'] = False
 
     #  changing part:
-    config['seg_len'] = 996
+    config['seg_len'] = 995
     config['time_step'] = 1  # predict in segment
     config['training_epochs'] = 600
     config['batch_size'] = 64 if config['plant'] == 'arc' else 128  # arc: 64| pid: 128
