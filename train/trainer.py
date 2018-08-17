@@ -6,7 +6,7 @@ import numpy as np
 import dataset as D
 import scipy.io as scio
 import tensorflow as tf
-from network.rnn import keras_model as NN
+from network.narx import network as NN
 from scipy.signal import savgol_filter as filt
 from tpot import TPOTRegressor 
 from matplotlib import pyplot as plt
@@ -19,8 +19,6 @@ class Trainer:
 
         if self.config['restore']:
             self.nn.restore()
-
-        self.batch_size = config['batch_size']
 
     def add_raw(self, X, Y, data_type='train'):
         #  smooth y:
@@ -101,8 +99,6 @@ class Trainer:
         overrange = np.argwhere(np.max(diff_Y, axis=1)>0.3)[:, 0]
         diff_Y = np.delete(diff_Y, overrange, axis=0)*3.0
         train_dataX = np.delete(self.train_dataX, overrange, axis=0)
-        #  downsample:
-        pdb.set_trace()
         #  _, diff_Y = D.down_sample(diff_Y, 10, 1)
         #  _, train_dataX = D.down_sample(train_dataX, 10, 1)
         print(diff_Y.shape)

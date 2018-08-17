@@ -20,8 +20,8 @@ class network:
         self.sess.run(tf.initialize_variables(tf.global_variables())
         
     def build_net(self):
-        self.input = tf.placeholder(tf.float32, shape=(None, self.config['time_steps'], self.config['dim']+1)) # using (e, x, v, a, j)_(t-1) to predict e_t
-        self.label = tf.placeholder(tf.float32, shape=(None, self.config['time_steps'], 1))
+        self.input = tf.placeholder(tf.float32, shape=(None, self.config['seg_len'], self.config['dim']+1)) # using (e, x, v, a, j)_(t-1) to predict e_t
+        self.label = tf.placeholder(tf.float32, shape=(None, self.config['seg_len'], 1))
 
         _layer = self.input
 
@@ -37,25 +37,19 @@ class network:
         self.saver.restore('train_log/narx_model')
 
     def train(self, x, y):
-
-        # restore/ 
-        if self.config['restore']:
-            self.restore()
-        for epoch, data_dict in self.config['epochs'], self.data_dict_gen(x, y):
+        for epoch, data_dict in self.config['training_epochs'], self.data_dict_gen(x, y):
             _, loss = self.sess.run(self.train_op, self.loss, feed_dict = data_dict)  
             print("epoch:{}|loss:{}".format(epoch, loss))
 
         print("training finished!")
-        if self.config['save']:
-            self.save()
 
     # generating data_dicts:
     # x[t-1], e[t-1], y[t]
 
     def data_dict_gen(self, x, y):
         '''
-        x: (None, time_s, 4)
-        y: (None, time_s, 1)
+        x: (None, seg_len, 4)
+        y: (None, seg_len, 1)
         '''
         x = np.concatenate([x[:, 1:], y[:,:-1]], axis=-1)
         y = y[:, 1:]
