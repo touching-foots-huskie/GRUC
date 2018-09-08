@@ -3,3 +3,6 @@
 *.npy
 *.xml
 *.pyc
+*.cvs
+*.meta
+train_log/*

@@ -1,9 +1,9 @@
 clc
 clear
 addpath  ../tool
-number = [67, 66, 71, 69];
-names = [{'PID'}, {'ILC[1]'}, {'ILC[4]'}, {'GRU'}];
-color = [{'b'}, {'r'}, {'g'}, {'k'}];
+number = [77, 73, 80];
+names = [{'PID'}, {'ILC'}, {'GRU'}];
+color = [{'b'}, {'r'}, {'k'}];
 file_path = '../measure/log/mat/pid';
 %% first time:
 for i = 1:1:max(size(number))
@@ -14,7 +14,6 @@ for i = 1:1:max(size(number))
 
     t = (0:1/5000:(size(x)/5000-1/5000))';
     e = x - y;
-    e = noise_filt(e);
 
     % alignment
     p = min(find(abs(x-0.1)<1e-10));
@@ -22,21 +21,24 @@ for i = 1:1:max(size(number))
     start_p = min(ad);
     if i == 1
         pad = floor(start_p*0.05);
-        end_p = max(ad);
+        end_p = min(max(ad), max(size(e)));
     else
         end_p = min(start_p+pad+size(t,1), max(size(e)));
     end
     start_p = start_p + pad;
 
+    % cut ends:
+    end_p = floor(end_p*0.9);
+    
     subplot(max(size(number)),1,i);
     plot(t(1:end_p-start_p + 1), e(start_p:end_p), sprintf('%s', char(color(i))));
     if i == 1
-        axis([10, 20, -1e-5, 1e-5]);
+        axis([10, 30, -1.5e-5, 1.5e-5]);
     else
-        axis([10, 20, -1e-5, 1e-5]);
+        axis([10, 30, -1.5e-5, 1.5e-5]);
     end
     ylabel(sprintf('%s (m)', char(names(i))));
     rms(e(start_p+pad:end_p))
     max(e(start_p+pad:end_p))
 end
-
+xlabel('Time (s)');

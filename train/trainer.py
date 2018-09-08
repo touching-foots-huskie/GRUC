@@ -7,15 +7,20 @@ import dataset as D
 import scipy.io as scio
 import tensorflow as tf
 from network.narx import network as NN
+from network.rnn import keras_model as KN 
 from scipy.signal import savgol_filter as filt
-from tpot import TPOTRegressor 
 from matplotlib import pyplot as plt
 
 
 class Trainer:
     def __init__(self, config):
         self.config = config
-        self.nn = NN(config) 
+        if self.config['network'] == 'narx':
+            self.nn = NN(config) 
+        elif self.config['network'] == 'rnn':
+            self.nn = KN(config)
+        else:
+            raise Exception('Invalid network', self.config['network'])
 
         if self.config['restore']:
             self.nn.restore()
@@ -60,14 +65,14 @@ class Trainer:
         _, dataX = D.down_sample(dataX, 10, axis=1)
         _, dataY = D.down_sample(dataY, 10, axis=1)
         '''
-        self.train_dataX = dataX
-        self.train_dataY = dataY
+        self.train_dataX = dataX[:-self.config['batch_size']]
+        self.train_dataY = dataY[:-self.config['batch_size']]
         np.save('{}/fast_data/trainX.npy'.format(self.config['plant']), self.train_dataX)
         np.save('{}/fast_data/trainY.npy'.format(self.config['plant']), self.train_dataY)
 
         self.val_data = dict()
-        self.val_dataX = dataX[-100:]
-        self.val_dataY = dataY[-100:]
+        self.val_dataX = dataX[-self.config['batch_size']:]
+        self.val_dataY = dataY[-self.config['batch_size']:]
         self.val_data['X'] = self.val_dataX
         self.val_data['Y'] = self.val_dataY
         np.save('{}/fast_data/valX.npy'.format(self.config['plant']), self.val_dataX)
@@ -116,30 +121,28 @@ class Trainer:
     def implement(self, iter_time=1):
         #  imdataX is the data come from target structure:
         #  imdatax should be (N, time_step, 9)
-        im_dataX = scio.loadmat('matlab_id/data/im_data.mat'.format(self.config['plant']))['x']  #  experiemental scaled
+        im_dataX = scio.loadmat('matlab_id/data/prediction/stack{}/im_data.mat'.format(self.config['stack_num']))['x']  #  experiemental scaled
         if len(im_dataX.shape) == 2:
             im_dataX = im_dataX[:, :, np.newaxis]
 
-        for i in range(iter_time):
-            d_im_dataX = D.x_process(im_dataX, self.config)
-            predict_Y = self.nn.implement(d_im_dataX)
-            predict_Y = predict_Y/self.config['scales'][-1]
-            #  padd zero:
-            z_num = predict_Y.shape[0]
-            z_c = predict_Y.shape[-1]
+        d_im_dataX = D.x_process(im_dataX, self.config)
+        predict_Y = self.nn.implement(d_im_dataX)
+        predict_Y = predict_Y/self.config['scales'][-1]
+        #  padd zero:
+        z_num = predict_Y.shape[0]
+        z_c = predict_Y.shape[-1]
 
-            
-            if self.config['diff'] == True:
-                predict_Y = np.concatenate([np.zeros([z_num, 2+self.config['m'], z_c]), predict_Y,\
-                np.zeros([z_num, 2, z_c])], axis=1)
-                #  diff support iterations
-            else:
-                predict_Y = np.concatenate([np.zeros([z_num, self.config['m'], z_c]), predict_Y, np.zeros([z_num, num_diff, z_c])], axis=1)
+        if self.config['diff'] == True:
+            predict_Y = np.concatenate([np.zeros([z_num, 2+self.config['c_step'], z_c]), predict_Y,\
+            np.zeros([z_num, 2, z_c])], axis=1)
+            #  diff support iterations
+        else:
+            predict_Y = np.concatenate([np.zeros([z_num, self.config['c_step'], z_c]), predict_Y, np.zeros([z_num, num_diff, z_c])], axis=1)
                 
-            #  compensate zero
-            num_diff = im_dataX.shape[1] - predict_Y.shape[1]
-            predict_Y = np.concatenate([predict_Y, np.zeros([z_num, num_diff, z_c])], axis=1)
+        #  compensate zero
+        num_diff = im_dataX.shape[1] - predict_Y.shape[1]
+        predict_Y = np.concatenate([predict_Y, np.zeros([z_num, num_diff, z_c])], axis=1)
 
         #  reshape into standard shape
-        scio.savemat('matlab_id/data/pre_data.mat'.format(self.config['plant']), {'yp':predict_Y})
+        scio.savemat('matlab_id/data/prediction/stack{}/pre_data.mat'.format(self.config['stack_num']), {'yp':predict_Y})
         return predict_Y

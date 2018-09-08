@@ -1,2 +1,2 @@
-model_checkpoint_path: "narx_model"
-all_model_checkpoint_paths: "narx_model"
+model_checkpoint_path: "pid_model_c1_narx"
+all_model_checkpoint_paths: "pid_model_c1_narx"

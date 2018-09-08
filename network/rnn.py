@@ -49,18 +49,12 @@ class keras_model:
         return history
 
     def save(self):
-        if  self.config['mode'] == 'res_train':
-            self.model.save_weights('train_log/{}_res_model.h5'.format(self.config['plant']))
-        else:
-            self.model.save_weights('train_log/{}_model.h5'.format(self.config['plant']))
-            print('model saved!')
+        self.model.save_weights('train_log/{}.h5'.format(self.config['model_name']))
+        print('model saved!')
 
     def restore(self):
-        if  self.config['mode'] == 'res_test' or self.config['mode'] == 'res_train':
-            self.model.load_weights('train_log/{}_res_model.h5'.format(self.config['plant']))
-        else:
-            print('I am going to load {}'.format(self.config['plant']))
-            self.model.load_weights('train_log/{}_model.h5'.format(self.config['plant']))
+        print('I am going to load {}'.format(self.config['plant']))
+        self.model.load_weights('train_log/{}.h5'.format(self.config['model_name']))
         print('model loaded!')
 
     def validate(self, val_dataX, val_dataY):
@@ -68,18 +62,8 @@ class keras_model:
         print(val_dataX.shape)
         predict_Y = self.model.predict(val_dataX)
         for i in range(val_dataX.shape[0]):
-            #  plt.plot(val_dataX[i, :, 1], label='A')
-            #  plt.plot(val_dataX[i, :, 2], label='J')
             plt.plot(predict_Y[i].ravel(), label='prediction')
             plt.plot(val_dataY[i].ravel(), label='actual')
-            #  smooth:
-            '''
-            sig = val_dataY[i].ravel()
-            sig = filt(sig, 51, 5) 
-            plt.plot(sig, label='smooth')
-            '''
-            #  d_index, d_val_dataY = D.down_sample(val_dataY[i], 10)
-            #  plt.plot(d_index, d_val_dataY, label='d')
             plt.legend()
             plt.show()
 

@@ -1,15 +1,14 @@
-clc
-clear 
-
+function run_lsm(stacknum)
 %% learn from a specific data part
 addpath ../tool
-No = 30;
+No = 30;  % training data
 
-No2 = 44; % examed data
 fs = 5000;
 mode = 'pid';
 file_path = '../measure/log/mat/pid';
 
+% if plot:
+draw = false;
 % load data
 load(sprintf( '%s/%d.mat', file_path, No)); 
 c = rec.Y(1).Data';
@@ -17,7 +16,7 @@ x = rec.Y(4).Data';
 y = rec.Y(3).Data';
 
 % exam data
-load(sprintf( '%s/%d.mat', file_path, No2));
+load(sprintf('../data/prediction/stack%d/data.mat', stacknum));
 c2 = rec.Y(1).Data';
 x2 = rec.Y(4).Data';
 y2 = rec.Y(3).Data';
@@ -69,14 +68,22 @@ theta = (T)\A'*e;
 % make prediction on e2
 ep = A2 * theta;
 t = 1/fs:1/fs:max(size(ep))/fs;
-plot(t, e2);
-hold on
-plot(t, ep);
+if draw
+    plot(t, e2);
+    hold on
+    plot(t, ep);
 
-% statistic value of error
-rms(e2 - ep)
-max(e2 - ep)
+    % statistic value of error
+    rms(e2 - ep)
+    max(e2 - ep)
 
-legend('experiment', 'prediction');
-xlabel('time (s)');
-ylabel('tracking error (m)');
+    legend('experiment', 'prediction');
+    xlabel('time (s)');
+    ylabel('tracking error (m)');
+end
+% save ep: | reshape yp
+yp = ep;
+yp = reshape(yp, [1, max(size(yp))]);
+
+save(sprintf('../data/prediction/stack%d/pre_data.mat', stacknum), 'yp');
+end

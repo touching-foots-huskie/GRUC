@@ -4,7 +4,7 @@ clear
 %
 addpath ../tool
 %% 1. read data:
-mode = 'pid'
+mode = 'pid';
 Start = 31;
 End = 50;
 filenames = cell((End-Start+1), 1);

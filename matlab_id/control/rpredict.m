@@ -1,4 +1,5 @@
 function rpredict(No1, stack_num)
+% prediction for existing reference
 addpath ../tool
 file_path = '../measure/log/mat/pid';
 

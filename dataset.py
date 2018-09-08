@@ -62,17 +62,14 @@ def xy_process(X, Y, config):
 
     Y *= config['scales'][-1]
 
-    '''
-    print('X: {}'.format(X[:, 0].max()))
-    print('V: {}'.format(X[:, 1].max()))
-    print('A: {}'.format(X[:, 2].max()))
-    print('J: {}'.format(X[:, 3].max()))
-    print('Y: {}'.format(Y.max()))
-    '''
-
+    datax, datay = [], []
+    _t = config['time_step']
+    for j in range((Y.shape[0]-2*config['c_step'])//_t):
+        datax.append(X[j*_t:(j+1)*_t+2*config['c_step']].ravel())
+        datay.append(Y[j*_t+config['c_step']:(j+1)*_t+config['c_step']].ravel())
     #  get tuples:
-    datax = np.asarray(X, dtype=np.float32)
-    datay = np.asarray(Y, dtype=np.float32)
+    datax = np.asarray(datax, dtype=np.float32)
+    datay = np.asarray(datay, dtype=np.float32)
 
     return datax, datay
 
@@ -101,11 +98,18 @@ def x_process(X, config):
             Xm = np.concatenate([X[0, 2:-2], V, A, J], axis=-1)
 
         #  get scaled:
-        for k in range(Xm.shape[-1]):
-            Xm[:, k] *= config['scales'][k]
+        try:
+            for k in range(Xm.shape[-1]):
+                Xm[:, k] *= config['scales'][k]
+        except:
+            pdb.set_trace()
 
+        datax = []
+        _t = config['time_step']
+        for j in range((Xm.shape[0]-2*config['c_step'])//_t):
+            datax.append(Xm[j*_t:(j+1)*_t+2*config['c_step']].ravel())
         #  time connected
-        datax = np.asarray(Xm, dtype=np.float32)
+        datax = np.asarray(datax, dtype=np.float32)
         dataX.append(datax)
     #  cast:
     dataX = np.asarray(dataX)

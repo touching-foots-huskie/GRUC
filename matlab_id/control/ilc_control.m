@@ -1,14 +1,9 @@
 % ilc control and noised ilc control
-clc
-clear
+function ilc_control(dtype, No, stack_num, noise, change)
 addpath ../tool
-No = 69; % original PID or ILC in previous iter
 file_path = '../measure/log/mat/pid';
-stack_num = 2;
 % noise
-noise = false;  % add noise
-change = false;  % change with a new traj 
-replace = true;  % replace it with another traj
+replace = false;  % replace it with another traj
 % if replace
 Num = 44;
 
@@ -37,7 +32,11 @@ t = 0:1/5000:(size(x1)/5000-1/5000);
 if noise
     plot(t', x1);
     hold on
-    x1 = nurbs_noise(x1, T, A);
+    if strcmp(dtype, 'nurbs')
+    	x1 = nurbs_noise(x1, T, A);
+    elseif strcmp(dtype, 'sin')
+        x1 = sin_noise(x1, T, A);
+    end
     plot(t', x1);
 end
 
@@ -45,7 +44,11 @@ end
 if change
     plot(t', x1);
     hold on
-    x1 = nurbs_change(x1, T, A);
+    if strcmp(dtype, 'nurbs')
+        x1 = nurbs_change(x1, T, A);
+    elseif strcmp(dtype, 'sin')
+        x1 = sin_change(x1, T, A);
+    end
     plot(t', x1);
 end
 
